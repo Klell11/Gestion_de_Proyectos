@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Dashboard de Proyectos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body class="bg-light">
+    <!-- Encabezado -->
+    <header class="bg-primary text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Dashboard de Proyectos</h1>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container mt-4">
+        <!-- Lista de proyectos con progreso -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Proyectos</h2>
+                    <a href="{% url 'crear_proyecto' %}" class="btn btn-success">Crear Proyecto</a>
+                </div>
+            </div>
+
+            {% for proyecto in proyectos %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ proyecto.nombre }}</h5>
+                        <p class="card-text">{{ proyecto.descripcion|truncatewords:15 }}</p>
+                        <p><strong>Fecha límite:</strong> {{ proyecto.fecha_entrega }}</p>
+
+                        <!-- Barra de progreso -->
+                        <div class="mb-3">
+                            <h6>Progreso: {{ proyecto.progreso|floatformat:2 }}%</h6>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ proyecto.progreso }}%;" aria-valuenow="{{ proyecto.progreso }}" aria-valuemin="0" aria-valuemax="100">
+                                    {{ proyecto.progreso|floatformat:2 }}%
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón para ver detalle -->
+                        <a href="{% url 'detalle_proyecto' proyecto.id %}" class="btn btn-primary btn-sm">Ver Detalle</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-muted text-center">No hay proyectos registrados.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-dark text-white text-center py-3 mt-4">
+        <p class="mb-0">&copy; 2025 Mi Aplicación de Proyectos</p>
+    </footer>
+
+    <!-- Script para Chart.js -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+    
+            // Datos dinámicos generados desde el backend
+            const labels = [
+                {% for proyecto in proyectos %}
+                    "{{ proyecto.nombre }}",
+                {% endfor %}
+            ];
+            const data = [
+                {% for proyecto in proyectos %}
+                    {{ proyecto.progreso|default:0 }},
+                {% endfor %}
+            ];
+    
+
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
